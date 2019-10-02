@@ -1,0 +1,180 @@
+﻿#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int puzzle_list[1024][1024] ;
+int sol[1024][1024] ;
+
+int main ()
+{
+    FILE *instream;
+    int matrix_col_num = 0, matrix_row_num = 0;
+    
+    int i = 0, j = 0 ,c = 0, k = 0;
+
+    // open stdin for reading
+    instream = fopen("/dev/stdin","r");
+
+    if(instream!=NULL)
+    {
+    // read from stdin until it's end
+        char temp;
+        while( (temp = fgetc(instream)) != EOF ){
+            if((temp != ' ') && (temp != '\n'))
+            {
+                puzzle_list[i][j] = temp-'0';
+                j++;
+            }
+            else if(temp == '\n')
+            {
+                k = j;
+                i++;
+                j=0;
+            }
+        }
+
+        matrix_row_num = i+1;
+        matrix_col_num = k;
+        printf("matrix_row_num : %d\n",matrix_row_num);
+        printf("matrix_col_num : %d\n",matrix_col_num);
+
+    }
+       // if any error occured, exit with an error message
+    else
+    {
+           fprintf(stderr, "ERROR opening stdin. aborting.\n");
+           exit(1);
+    }
+ 
+
+ FILE * fp= fopen("formula", "w");
+
+ int direct[3] = {-1,0,1};
+
+    for (i = 0 ; i < matrix_row_num ; i++)
+        for (j = 0 ; j < matrix_col_num ; j++)
+            fprintf(fp,"(declare-const p%03d_%03d Int)\n", i, j) ;
+
+    // Q1
+    fprintf(fp, "; Q1\n") ;
+    fprintf(fp, "(assert (and ") ;
+    for (i = 0 ; i < matrix_row_num ; i++) {
+        for (j = 0 ; j < matrix_col_num ; j++)
+            fprintf(fp,"(and (<= p%03d_%03d %d) (>= p%03d_%03d %d) ) ", i, j, 1, i, j, 0) ;
+    }
+    fprintf(fp, "))\n") ;
+
+ // Q2
+
+ fprintf(fp, "; Q2\n");
+ fprintf(fp, "(assert (and ") ;
+ for(i = 0; i < matrix_row_num; i++){
+  for(j =0; j< matrix_col_num; j++){
+
+   if(puzzle_list[i][j] != 0){
+
+    fprintf(fp, "(= (+ ");
+
+    for(int n =0; n<3; n++){
+     for(int k=0; k<3; k++){
+
+      if( (i+direct[n] >= 0 && i+direct[n] < matrix_row_num) && (j+direct[k] >= 0 && j+direct[k] < matrix_col_num) )
+      fprintf(fp, "p%03d_%03d ", j+ direct[k] , i+direct[n]);
+     }
+    }
+    fprintf(fp, ") %d )", puzzle_list[i][j]);
+   } //if
+
+  }
+ }
+ fprintf(fp, ") )\n");
+
+
+ fprintf(fp, "(check-sat)\n(get-model)\n") ;
+
+
+
+
+ while(c < 10 )
+ {
+
+
+  int m, n, size, w=0;
+
+  int bomb;
+  char buf[256] ;
+  char locate[256];
+
+  FILE * form = popen("z3 formula", "r");
+
+  fseek(fp, -24, SEEK_END);
+  fseek(form, 0, SEEK_END);
+  size = ftell(form);
+  fseek(form, 0, SEEK_SET);
+  fprintf(fp, "\n;solution %d\n", c);
+
+
+  fscanf(form, "%s", buf);
+
+
+  if(strcmp(buf,"unsat") == 0)
+  {
+      if(c==0) printf("No solution!");
+    else{
+     break;
+    }
+      break;
+  }
+  fscanf(form, "%s", buf);
+
+  fprintf(fp, "(assert (not (and");
+
+
+ while(!feof(form))
+ {
+
+
+  fprintf(fp, "(= ");
+
+  fscanf(form, "%*s");
+  fscanf(form, "%s", locate); //
+  fscanf(form, "%*s"); // ()
+  fscanf(form, "%*s"); // Int
+  fscanf(form, "%d", &bomb); // bomb
+
+  fscanf(form, "%*s");
+
+  sscanf(locate, "%*1s %03d_%03d", &m,&n);
+  
+  fprintf(fp, "p%03d_%03d %d)", m, n, bomb);
+ 
+
+  sol[m][n] = bomb;
+
+
+ }
+
+
+ fprintf(fp, ")))\n");
+ fprintf(fp, "(check-sat)\n(get-model)\n");
+
+ printf("solution%d\n\n",c+1);
+
+ for(i = 0; i< matrix_col_num ; i++){
+  for(j = 0; j < matrix_row_num ; j++){
+   printf("%d ", sol[j][i]);
+  }
+  printf("\n");
+ }
+
+
+  printf("\n");
+  pclose(form);
+  c++;
+ 
+
+ }//while end
+
+ 
+ 
+}
