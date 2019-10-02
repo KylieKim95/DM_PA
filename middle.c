@@ -4,36 +4,41 @@
 
 int main ()
 {
-  Numbrix[128][128];
-
-  * FILE *instream;
+  /* FILE *instream;
     
-    int row = 0, col = 0, k = 0;
+    int i = 0, j = 0 , k = 0;
 
     // open stdin for reading
     instream = fopen("/dev/stdin","r");
 
-    if(instream != NULL)
+    if(instream!=NULL)
     {
     // read from stdin until it's end
-
+i
         char temp;
         while( (temp = fgetc(instream)) != EOF ){
             if((temp != ' ') && (temp != '\n'))
             {
-                Numbrix[row][col] = temp-'0';
-                col++;
+                puzzle_list[i][j] = temp-'0';
+                j++;
             }
             else if(temp == '\n')
             {
-                k = col;
-                row++;
-                col=0;
+                k = j;
+                i++;
+                j=0;
             }
         }
-    }
 
-   
+    */
+    int array[3][16] =
+    {
+        {0,0,0,4,5,0,7,0,0,0,0,0,0,0,15,16},
+        {0,0,0,0,0,27,26,25,0,0,0,0,0,19,18,17},
+        {33,34,35,36,0,38,0,0,0,0,0,0,0,0,0,0}
+        //0을 ?로 생각하세요
+    };
+    
     //Q1
     for(int i=0; i<=4; i++)
     {	

@@ -4,40 +4,18 @@
 
 int main ()
 {
-  Numbrix[128][128];
-
-  * FILE *instream;
-    
-    int row = 0, col = 0, k = 0;
-
-    // open stdin for reading
-    instream = fopen("/dev/stdin","r");
-
-    if(instream != NULL)
+    int array[3][3] =
     {
-    // read from stdin until it's end
-
-        char temp;
-        while( (temp = fgetc(instream)) != EOF ){
-            if((temp != ' ') && (temp != '\n'))
-            {
-                Numbrix[row][col] = temp-'0';
-                col++;
-            }
-            else if(temp == '\n')
-            {
-                k = col;
-                row++;
-                col=0;
-            }
-        }
-    }
-
-   
+        {0,0,0},
+        {0,5,0},
+        {0,0,0}
+        //0을 ?로 생각하세요
+    };
+    
     //Q1
     for(int i=0; i<=4; i++)
     {	
-        for(int j = 0; j<=17; j++)
+        for(int j = 0; j<=4; j++)
         {
 
                 printf("(declare-const p%d%d Int)\n",i,j);
@@ -49,28 +27,25 @@ int main ()
     //Q2
     for(int i = 1; i<=3; i++)
     {
-	for(int j = 1; j<=7; j++)
+	for(int j = 1; j<=3; j++)
         {
-    	    printf("(assert (and (>= p%d%d 0) (<= p%d%d 48)))\n",i,j,i,j);
+    	    printf("(assert (and (>= p%d%d 0) (<= p%d%d 9)))\n",i,j,i,j);
         }
     }
     //여기서 pij의 범위 명시
 
     //Q3
     for(int i=0; i<=4; i++)
+    for(int j=0; j<=4; j++)
     {
-	for(int j=0; j<=17; j++)
-    	{
-            if(i==0 || i==4 || j==0 || j==17)
-            {
-           	
-		 printf("(assert ( = p%d%d 0))\n",i,j);
-           
-	    } else if(array[i-1][j-1]!=0)
-	    {
-        	    printf("(assert ( = p%d%d %d))\n",i,j,array[i-1][j-1]);
-            }
-	}
+        if(i==0 || i==4 || j==0 || j==4)
+        {
+            printf("(assert ( = p%d%d 0))\n",i,j);
+        }
+        else if(array[i-1][j-1]!=0)
+        {
+            printf("(assert ( = p%d%d %d))\n",i,j,array[i-1][j-1]);
+        }
     }
     //인풋의 숫자부터 주어진 배열에 할당.pij와 array의 범위는 다르다 pij가 하나 확장된 범위를 표현한다(테두리 포함)
 
@@ -78,22 +53,21 @@ int main ()
     printf("(assert (and ");
     for(int i=1; i<=3; i++)
     {
-   	 for(int j=1; j<=16; j++)
+   	 for(int j=1; j<=3; j++)
    	 {
 	        //printf("(and ");
- 		printf("(or ( = p%d%d 48) (= (- p%d%d p%d%d) 1) (= (- p%d%d p%d%d) 1) (= (- p%d%d p%d%d) 1) (= (- p%d%d p%d%d) 1))",i,j,i,j+1,i,j,i,j-1,i,j,i+1,j,i,j,i-1,j,i,j);
+ 		printf("(or ( = p%d%d 9) (= (- p%d%d p%d%d) 1) (= (- p%d%d p%d%d) 1) (= (- p%d%d p%d%d) 1) (= (- p%d%d p%d%d) 1))",i,j,i,j+1,i,j,i,j-1,i,j,i+1,j,i,j,i-1,j,i,j);
         	printf("(or ( = p%d%d 1) (= (- p%d%d p%d%d) -1) (= (- p%d%d p%d%d) -1) (= (- p%d%d p%d%d) -1) (= (- p%d%d p%d%d) -1))",i,j,i,j+1,i,j,i,j-1,i,j,i+1,j,i,j,i-1,j,i,j);
-		 //printf(")");
+//        	printf(")");
    	 }
     }
     printf("))\n");
     //칸 안의 수가 가장 큰 값이거나, 1큰 값이 동서남북에 존재하는 경우 & 가장 작은 값이거나, -1인 값이 동서남북에 존재하는 경우  
-    
-    //Q5
+    //Q4
     printf("(assert (distinct ");
     for(int i=1; i<=3; i++)
     {
-	for(int j=1; j<=16; j++)
+	for(int j=1; j<=3; j++)
    	{
         	printf("p%d%d ",i,j);
    	}
@@ -101,5 +75,5 @@ int main ()
     printf("))\n");
     //모두 다른 값을 가지는 경우
     
-    printf("(check-sat)\n(get-model)\n");    
+    printf("(check-sat)\n(get-model)");    
 }
