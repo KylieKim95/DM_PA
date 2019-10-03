@@ -4,34 +4,31 @@
 
 int main ()
 {
-
-	FILE* instream;
-	instream = fopen("/dev/stdin","r");
-
-
-    char  Numbrix[1024][1024];
+    int  Numbrix[1024][1024];
+	char *str;
+	char *p_str;
     int row = 0, col =0 , N_row = 0, N_col = 0, Max_num = 0;
 
-    if(instream != NULL)
-	{	char temp;
-			while((temp = fgetc(instream)) != EOF)
-			{ 
-					if((temp != " ") && (temp != "\n"))
-					{
-							Numbrix[row][col] = temp - '0';
-							col++;
+    // open stdin
+    while(!feof(stdin))
+    // read from stdin until it's end
+	{
+		fgets(str,1024,stdin);
+		for(p_str = strtok(str," "); p_str; p_str = strtok(NULL," "))
+		{
+			Numbrix[row][col] = atoi(p_str);
+			col++;
+		}
+		N_col = col;
+		row++;
+		col = 0;
+		}
+	N_row = row++;
+ 	Max_num = N_row * N_col;
 
-					}
-			}
-	} else if(temp == "\n")
-	  {
-			  N_col = col;
-			  row++;
-			  col=0;
-	  }
-
+   
        // if any error occured, exit with an error message
-	else
+    if(stdin == NULL)
     {
            fprintf(stderr, "ERROR opening stdin. aborting.\n");
            exit(1);
