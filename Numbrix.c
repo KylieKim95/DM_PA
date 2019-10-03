@@ -26,7 +26,7 @@ int main ()
                 col = 0;
             } else { }
         }
-	
+	--N_col;
 	N_row = row++;
  	Max_num = N_row * N_col;
 
