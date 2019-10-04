@@ -21,5 +21,5 @@ Output is saved in NumbrixSolution.txt
 
 **#3.Input Condition** 
 
-The Maximum input size is '100x100'.
+The maximum input size is '100x100'.
 Unknown number have to be expressed by '?'.
