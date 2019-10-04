@@ -1,0 +1,8 @@
+#! /bin/bash
+
+gcc problem3Solver.c -o problem3Solver
+
+cat input.txt | ./problem3Solver > NumbrixSolution.txt
+
+rm formula
+rm problem3Solver
